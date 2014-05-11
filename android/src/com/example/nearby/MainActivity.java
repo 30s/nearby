@@ -21,6 +21,11 @@ import android.widget.ListView;
 
 import com.example.nearby.adapters.WifiAdapter;
 import com.example.nearby.models.Wifi;
+import com.parse.GetCallback;
+import com.parse.Parse;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 
 public class MainActivity extends ActionBarActivity {
 
@@ -70,6 +75,13 @@ public class MainActivity extends ActionBarActivity {
 			}
 		};
 
+		private void saveWifi(Wifi wifi) {
+			ParseObject w = new ParseObject("Wifi");
+			w.put("name", wifi.getName());
+			w.put("BSSID", wifi.getBSSID());
+			w.saveEventually();
+		}
+
 		private BroadcastReceiver wifiReceiver = new BroadcastReceiver() {
 
 			@Override
@@ -78,6 +90,7 @@ public class MainActivity extends ActionBarActivity {
 				for (ScanResult sr : results) {
 					Wifi wifi = new Wifi(sr.SSID, sr.BSSID);
 					adapter.add(wifi);
+					saveWifi(wifi);
 				}
 			}
 		};
@@ -94,6 +107,10 @@ public class MainActivity extends ActionBarActivity {
 				Bundle savedInstanceState) {
 			View rootView = inflater.inflate(R.layout.fragment_main, container,
 					false);
+
+			Parse.initialize(getActivity(),
+					"pQZLIr5NXvErXQCAvdW30K9WPHZ92afu7FHdDgZM",
+					"cEb0UIuQc421gFYQexijCjU0xsn3VpJAXbywVxv8");
 
 			rootView.findViewById(R.id.btn_scan).setOnClickListener(
 					onClickListener);
